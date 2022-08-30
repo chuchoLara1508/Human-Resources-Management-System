@@ -1,0 +1,35 @@
+<?php
+    $error=0;
+    if(isset($_REQUEST["regPuesto"])){
+        if(isset($_POST["nombrePuesto"])&&!empty($_POST["nombrePuesto"])
+            &&
+            (isset($_POST["descPuesto"])&&!empty($_POST["descPuesto"]))
+            &&
+            (isset($_POST["deptoPuesto"])&&($_POST["deptoPuesto"])>0)
+            &&
+            (isset($_POST["pagoPuesto"])&&!empty($_POST["pagoPuesto"]))
+        ){
+            if(noRepetirValor($_POST["nombrePuesto"],"tbpuestos","nombre")){
+                $puesto= new CPuesto();
+                $puesto->clave=palealea(5);
+                $puesto->nombre=$_POST["nombrePuesto"];
+                $puesto->descripcion=$_POST["descPuesto"];
+                $puesto->departamento=buscarElemento("tbdepartamentos",$_POST["deptoPuesto"]);
+                $puesto->pago=$_POST["pagoPuesto"];
+                $puesto->claveDepto=buscarElementoClave("clave","tbdepartamentos","nombre",$puesto->departamento);
+                if($puesto->creaPuesto()){//2pm mañana mi mama debe mandarle msj a mi tio julio
+                    $error=0;
+                }
+                else{
+                    $error=2;
+                }
+            }
+            else{
+                $error=3;
+            }
+        }
+        else{
+            $error=1;
+        }
+    }    
+?>

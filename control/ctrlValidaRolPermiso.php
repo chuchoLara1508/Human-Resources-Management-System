@@ -1,0 +1,57 @@
+<?php
+
+    $error=0;
+    if(isset($_REQUEST["registrar"])){
+        if(
+            (isset($_POST["rol"])&&!empty($_POST["rol"])&&($_POST["rol"]>=1))
+            &&
+            (isset($_POST["modulo"])&&!empty($_POST["modulo"])&&($_POST["modulo"]>=1))
+        ){
+            $r= new CRolPermiso();
+            $r->clave=palealea(5);
+            $nombreRol=buscarElemento("roles",$_POST["rol"]);
+            $r->claveRol=buscarElementoClave("clave","roles","nombre",$nombreRol);
+            $nombreM=buscarElemento("modulos",$_POST["modulo"]);
+            $r->clavePermiso=buscarElementoClave("clave","modulos","nombre",$nombreM);
+            if(isset($_POST["alta"])&&($_POST["alta"]==1)){
+                $r->guardar=1;
+            }
+            else{
+                $r->guardar=0;
+            }
+            if(isset($_POST["baja"])&&($_POST["baja"]==2)){
+                $r->eliminar=1;
+            }
+            else{
+                $r->eliminar=0;
+            }
+            if(isset($_POST["edita"])&&($_POST["edita"]==3)){
+                $r->actualizar=1;
+            }
+            else{
+                $r->actualizar=0;
+            }
+            
+            if(!validaClaveRol($r->claveRol,"tbrolespermisos","clave_rol")){
+                if(!validaExisteRolModulo($r->claveRol,"tbrolespermisos","clave_rol",$r->clavePermiso,"clave_modulo")){
+                    if($r->altaPermisos()){
+                        $error=0;
+                    }
+                    else{
+                        $error=2;
+                    }
+                }
+                else{
+                    $error=4;
+                }
+            }
+            else{
+                $error=3;
+            }
+        }
+        else{
+            $error=1;
+        }
+    }
+
+?>
